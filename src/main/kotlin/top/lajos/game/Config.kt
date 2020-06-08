@@ -5,7 +5,7 @@ object Config {
     /*
     * 方格的宽和高
     * */
-    val block: Int = 64
-    val gameWidth: Int = block * 13
-    val gameHeight: Int = block * 13
+    const val block: Int = 64
+    const val gameWidth: Int = block * 13
+    const val gameHeight: Int = block * 13
 }
