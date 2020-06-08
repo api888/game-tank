@@ -2,9 +2,12 @@ package top.lajos.game.model
 
 import org.itheima.kotlin.game.core.Painter
 import top.lajos.game.Config
+import top.lajos.game.business.Attackable
 import top.lajos.game.business.AutoMovable
 import top.lajos.game.business.Destroyable
+import top.lajos.game.business.Sufferable
 import top.lajos.game.enums.Direction
+import top.lajos.game.ext.checkCollision
 
 /**
  * 子弹
@@ -12,17 +15,25 @@ import top.lajos.game.enums.Direction
  * create()函数返回两个值，是x, y
  */
 class Bullet(
+    override val owner: View,
     override val currentDirection: Direction,
-    create:(width: Int, height: Int)->Pair<Int, Int>) : AutoMovable, Destroyable {
+    create:(width: Int, height: Int)->Pair<Int, Int>
+) : AutoMovable, Destroyable, Attackable, Sufferable {
+
+
+    override val attackPower: Int = 1
 
     // 给子弹一个方向，方向由坦克决定
     override val width: Int
     override val height: Int
+    override val blood: Int = 1
 
     override var x: Int = 0
     override var y: Int = 0
 
     override val speed: Int = 8
+
+    private var isDestroyed: Boolean = false
 
     private val imagePath = "img/" + when (currentDirection) {
         Direction.UP -> "shot_top.gif"
@@ -56,6 +67,7 @@ class Bullet(
     }
 
     override fun isDestroyed() : Boolean {
+        if (isDestroyed) return true
         return when {
             x < -width -> true
             x > Config.gameWidth + width -> true
@@ -65,4 +77,18 @@ class Bullet(
         }
     }
 
+    override fun isCollision(sufferable: Sufferable): Boolean {
+        return checkCollision(sufferable)
+
+    }
+
+    override fun notifyAttack(sufferable: Sufferable) {
+//        println("子弹接收到碰撞了。。。")
+        // 子弹打到墙上后，子弹要销毁掉
+        isDestroyed = true
+    }
+
+    override fun notifySuffer(attackable: Attackable): Array<View>? {
+        return arrayOf(Blast(x, y))
+    }
 }
