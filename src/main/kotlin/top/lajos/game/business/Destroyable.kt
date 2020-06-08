@@ -8,4 +8,7 @@ import top.lajos.game.model.View
 interface Destroyable : View{
     /*判断是否销毁了*/
     fun isDestroyed(): Boolean
+
+    // 死给你看的功能
+    fun showDestroy(): Array<View>? = null
 }
